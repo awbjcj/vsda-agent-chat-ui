@@ -1,0 +1,12 @@
+services:
+  agent-chat-ui:
+      build:
+        context: .
+        args:
+          NEXT_PUBLIC_API_URL: http://localhost:8123
+          NEXT_PUBLIC_ASSISTANT_ID: "VSDA Agent"
+      image: agent-chat-ui
+      ports:
+          - "3333:3000"
+      # depends_on:
+      #     - langgraph-api
