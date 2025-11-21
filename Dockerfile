@@ -27,6 +27,12 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Build-time variables
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ARG NEXT_PUBLIC_ASSISTANT_ID
+ENV NEXT_PUBLIC_ASSISTANT_ID=${NEXT_PUBLIC_ASSISTANT_ID}
+
 RUN \
   if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   elif [ -f yarn.lock ]; then yarn run build; \
@@ -61,7 +67,7 @@ USER nextjs
 EXPOSE 3000
 
 ENV PORT 3000
-# set hostname to localhost
-ENV HOSTNAME "10.8.67.240"
+# set hostname to 0.0.0.0 to allow external access
+ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]
