@@ -25,10 +25,10 @@ COPY . .
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 # Set environment variables
-ENV NEXT_PUBLIC_API_URL "10.206.26.122:8123"
+ENV NEXT_PUBLIC_API_URL "http://10.206.26.122:8123"
 ENV NEXT_PUBLIC_ASSISTANT_ID "VSDA Agent"
 RUN \
   if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
@@ -64,7 +64,7 @@ USER nextjs
 EXPOSE 3000
 
 ENV PORT 3000
-# set hostname to 0.0.0.0 to allow external access
-ENV HOSTNAME "0.0.0.0"
+
+ENV HOSTNAME "10.206.26.122"
 
 CMD ["node", "server.js"]
