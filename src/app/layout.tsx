@@ -7,13 +7,10 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 // Fix for "TypeError: localStorage.getItem is not a function" in SSR
 if (
   typeof global !== "undefined" &&
-  // @ts-ignore
-  global.localStorage &&
-  // @ts-ignore
-  typeof global.localStorage.getItem !== "function"
+  (global as any).localStorage &&
+  typeof (global as any).localStorage.getItem !== "function"
 ) {
-  // @ts-ignore
-  global.localStorage = {
+  (global as any).localStorage = {
     getItem: () => null,
     setItem: () => {},
     removeItem: () => {},

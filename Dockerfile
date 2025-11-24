@@ -30,6 +30,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Set environment variables
 ENV NEXT_PUBLIC_API_URL "http://10.206.26.122:8123"
 ENV NEXT_PUBLIC_ASSISTANT_ID "VSDA Agent"
+
 RUN \
   if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   elif [ -f yarn.lock ]; then yarn run build; \
@@ -65,6 +66,6 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-ENV HOSTNAME "10.206.26.122"
+ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]
