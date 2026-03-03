@@ -72,12 +72,14 @@ interface InterruptProps {
   interrupt?: unknown;
   isLastMessage: boolean;
   hasNoAIOrToolMessages: boolean;
+  isInterruptOnly?: boolean;
 }
 
 function Interrupt({
   interrupt,
   isLastMessage,
   hasNoAIOrToolMessages,
+  isInterruptOnly = false,
 }: InterruptProps) {
   const fallbackValue = Array.isArray(interrupt)
     ? (interrupt as Record<string, any>[])
@@ -87,12 +89,12 @@ function Interrupt({
   return (
     <>
       {isAgentInboxInterruptSchema(interrupt) &&
-        (isLastMessage || hasNoAIOrToolMessages) && (
+        (isInterruptOnly || isLastMessage || hasNoAIOrToolMessages) && (
           <ThreadView interrupt={interrupt} />
         )}
       {interrupt &&
       !isAgentInboxInterruptSchema(interrupt) &&
-      (isLastMessage || hasNoAIOrToolMessages) ? (
+      (isInterruptOnly || isLastMessage || hasNoAIOrToolMessages) ? (
         <GenericInterruptView interrupt={fallbackValue} />
       ) : null}
     </>
@@ -122,6 +124,9 @@ export function AssistantMessage({
   const hasNoAIOrToolMessages = !thread.messages.find(
     (m) => m.type === "ai" || m.type === "tool",
   );
+
+  // If message is undefined, this component only renders the interrupt
+  const isInterruptOnly = message === undefined;
   const meta = message ? thread.getMessagesMetadata(message) : undefined;
   const threadInterrupt = thread.interrupt;
 
@@ -199,6 +204,7 @@ export function AssistantMessage({
               interrupt={threadInterrupt}
               isLastMessage={isLastMessage}
               hasNoAIOrToolMessages={hasNoAIOrToolMessages}
+              isInterruptOnly={isInterruptOnly}
             />
             <div
               className={cn(
