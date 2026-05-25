@@ -1,7 +1,7 @@
 import { parsePartialJson } from "@langchain/core/output_parsers";
 import { useStreamContext } from "@/providers/Stream";
 import { AIMessage, Checkpoint, Message } from "@langchain/langgraph-sdk";
-import { getContentString } from "../utils";
+import { getContentString, getThinkingText } from "../utils";
 import { BranchSwitcher, CommandBar } from "./shared";
 import { MarkdownText } from "../markdown-text";
 import { LoadExternalComponent } from "@langchain/langgraph-sdk/react-ui";
@@ -14,6 +14,7 @@ import { ThreadView } from "../agent-inbox";
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { GenericInterruptView } from "./generic-interrupt";
 import { useArtifact } from "../artifact";
+import Reasoning from "./reasoning";
 
 function CustomComponent({
   message,
@@ -71,12 +72,14 @@ interface InterruptProps {
   interrupt?: unknown;
   isLastMessage: boolean;
   hasNoAIOrToolMessages: boolean;
+  isInterruptOnly?: boolean;
 }
 
 function Interrupt({
   interrupt,
   isLastMessage,
   hasNoAIOrToolMessages,
+  isInterruptOnly = false,
 }: InterruptProps) {
   const fallbackValue = Array.isArray(interrupt)
     ? (interrupt as Record<string, any>[])
@@ -86,12 +89,12 @@ function Interrupt({
   return (
     <>
       {isAgentInboxInterruptSchema(interrupt) &&
-        (isLastMessage || hasNoAIOrToolMessages) && (
+        (isInterruptOnly || isLastMessage || hasNoAIOrToolMessages) && (
           <ThreadView interrupt={interrupt} />
         )}
       {interrupt &&
       !isAgentInboxInterruptSchema(interrupt) &&
-      (isLastMessage || hasNoAIOrToolMessages) ? (
+      (isInterruptOnly || isLastMessage || hasNoAIOrToolMessages) ? (
         <GenericInterruptView interrupt={fallbackValue} />
       ) : null}
     </>
@@ -107,6 +110,7 @@ export function AssistantMessage({
   isLoading: boolean;
   handleRegenerate: (parentCheckpoint: Checkpoint | null | undefined) => void;
 }) {
+  const thinkingText = getThinkingText(message);
   const content = message?.content ?? [];
   const contentString = getContentString(content);
   const [hideToolCalls] = useQueryState(
@@ -120,6 +124,9 @@ export function AssistantMessage({
   const hasNoAIOrToolMessages = !thread.messages.find(
     (m) => m.type === "ai" || m.type === "tool",
   );
+
+  // If message is undefined, this component only renders the interrupt
+  const isInterruptOnly = message === undefined;
   const meta = message ? thread.getMessagesMetadata(message) : undefined;
   const threadInterrupt = thread.interrupt;
 
@@ -155,10 +162,18 @@ export function AssistantMessage({
               interrupt={threadInterrupt}
               isLastMessage={isLastMessage}
               hasNoAIOrToolMessages={hasNoAIOrToolMessages}
+              isInterruptOnly={isInterruptOnly}
             />
           </>
         ) : (
           <>
+            {thinkingText && (
+              <Reasoning
+                content={thinkingText}
+                defaultExpanded={false}
+                enabled={true}
+              />
+            )}
             {contentString.length > 0 && (
               <div className="py-1">
                 <MarkdownText>{contentString}</MarkdownText>
@@ -189,6 +204,7 @@ export function AssistantMessage({
               interrupt={threadInterrupt}
               isLastMessage={isLastMessage}
               hasNoAIOrToolMessages={hasNoAIOrToolMessages}
+              isInterruptOnly={isInterruptOnly}
             />
             <div
               className={cn(

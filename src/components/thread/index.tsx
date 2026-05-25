@@ -365,7 +365,7 @@ export function Thread() {
                     height={32}
                   />
                   <span className="text-xl font-semibold tracking-tight">
-                    Agent Chat
+                    VSDA Agent Chat
                   </span>
                 </motion.button>
               </div>
@@ -427,6 +427,16 @@ export function Thread() {
                       handleRegenerate={handleRegenerate}
                     />
                   )}
+                  {/* Render interrupt after all messages if it exists and we have messages
+                      This handles sequential interrupts where the interrupt comes after previous messages */}
+                  {!hasNoAIOrToolMessages && !!stream.interrupt && !isLoading && (
+                    <AssistantMessage
+                      key="interrupt-msg-after-messages"
+                      message={undefined}
+                      isLoading={isLoading}
+                      handleRegenerate={handleRegenerate}
+                    />
+                  )}
                   {isLoading && !firstTokenReceived && (
                     <AssistantMessageLoading />
                   )}
@@ -438,7 +448,7 @@ export function Thread() {
                     <div className="flex items-center gap-3">
                       <LangGraphLogoSVG className="h-8 flex-shrink-0" />
                       <h1 className="text-2xl font-semibold tracking-tight">
-                        Agent Chat
+                        VSDA Agent Chat
                       </h1>
                     </div>
                   )}

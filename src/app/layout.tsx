@@ -28,8 +28,8 @@ const inter = Inter({
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const metadata: Metadata = {
-  title: "Agent Chat",
-  description: "Agent Chat UX by LangChain",
+  title: "VSDA Agent Chat",
+  description: "VSDA Agent Chat UX by VSDA Team",
 };
 
 export default function RootLayout({
@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <NuqsAdapter>{children}</NuqsAdapter>
       </body>
