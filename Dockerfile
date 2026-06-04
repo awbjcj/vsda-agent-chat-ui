@@ -28,7 +28,8 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Set environment variables
-ENV NEXT_PUBLIC_API_URL "http://10.206.26.122:8123"
+# Port 8000: Docker is not using bridge mode, so the container port maps directly to the host port 8000
+ENV NEXT_PUBLIC_API_URL "http://10.206.26.122:8000"
 ENV NEXT_PUBLIC_ASSISTANT_ID "VSDA Agent"
 
 RUN \
